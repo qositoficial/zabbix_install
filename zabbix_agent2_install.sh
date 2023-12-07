@@ -15,7 +15,7 @@
 #       Docker Network: 172.18.0.0/29
 #       Zabbix Proxy Container IP: 172.18.0.2
 #       Zabbix Version: 6.0 LTS
-#       Script Version: 1.0.1
+#       Script Version: 1.0.2
 # -------------------------------------------------------------------------------- #
 
 # Set variables coming from arguments
@@ -38,9 +38,11 @@ elif [[ $INSTALATION_TYPE == "full" && "$#" -ne 3 ]]; then
     echo "  Usage: ./$0 <full || agent2> <zabbix-hostname> <zabbix-proxyname>"
     exit 1
 
-elif ip addr | grep -q "172.18.0."; then
-    echo "  Warning: The 172.18.0.0/29 subnet is used to install this zabbix-proxy and was detected on this host."
-    exit 1
+elif [[ $INSTALATION_TYPE == "full" ]]; then
+    if ip addr | grep -q "172.18.0."; then
+        echo "  Warning: The 172.18.0.0/29 subnet is used to install this zabbix-proxy and was detected on this host."
+        exit 1
+    fi
 fi
 
 # Function to get the OS prettyname
