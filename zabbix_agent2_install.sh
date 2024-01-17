@@ -38,11 +38,6 @@ elif [[ $INSTALATION_TYPE == "full" && "$#" -ne 3 ]]; then
     echo "  Usage: ./$0 <full || agent2> <zabbix-hostname> <zabbix-proxyname>"
     exit 1
 
-elif [[ $INSTALATION_TYPE == "full" ]]; then
-    if ip addr | grep -q "172.18.0."; then
-        echo "  Warning: The 172.18.0.0/29 subnet is used to install this zabbix-proxy and was detected on this host."
-        exit 1
-    fi
 fi
 
 # Function to get the OS prettyname
@@ -109,6 +104,7 @@ install_zabbix_agent2() {
             exit 1
         else
             echo "  Adding zabbix repository ..."
+            yum remove zabbix-release -y
             rpm -Uvh https://repo.zabbix.com/zabbix/6.0/rhel/7/x86_64/zabbix-release-6.0-4.el7.noarch.rpm || download_error_message "zabbix_repository"
             yum clean all >/dev/null 2>&1
             apt update >/dev/null 2>&1
@@ -135,7 +131,7 @@ adjust_zabbix_agent2_conf() {
         echo "  Please enter the zabbix server address: "
         read -r ZABBIXSERVERADDRESS
     else
-        ZABBIXSERVERADDRESS="172.18.0.2"
+        ZABBIXSERVERADDRESS="127.0.0.1"
     fi
     echo "Server=$ZABBIXSERVERADDRESS
 ServerActive=$ZABBIXSERVERADDRESS
@@ -227,10 +223,12 @@ services:
         image: zabbix/zabbix-proxy-sqlite3:alpine-6.0-latest
         restart: unless-stopped
         volumes:
-            - /etc/localtime:/etc/localtime:ro
-            - /etc/timezone:/etc/timezone:ro
-        ports:
-            - 10051:10051
+            - type: bind
+              source: /etc/localtime
+              target: /etc/localtime:ro
+            - type: bind
+              source: /etc/timezone
+              target: /etc/timezone:ro
         environment:
             - TZ=\"America/Sao_Paulo\"
             - ZBX_PROXYMODE=0
@@ -253,18 +251,9 @@ services:
             - ZBX_TIMEOUT=4
             - ZBX_LOGSLOWQUERIES=3000
             - ZBX_STATSALLOWEDIP=127.0.0.1,::1,$ZABBIXSERVERADDRESS
-        networks:
-            network_zabbix:
-                ipv4_address: 172.18.0.2
-
-networks:
-    network_zabbix:
-        name: network_zabbix
-        driver: bridge
-        ipam:
-            driver: default
-            config:
-                - subnet: 172.18.0.0/29" >/opt/qnoc/docker-compose.yml
+        network_mode: host
+        expose:
+            - 10051" >/opt/qnoc/docker-compose.yml
 
     # Starting zabbix-proxy container
     echo "  Starting zabbix-proxy container ..."
