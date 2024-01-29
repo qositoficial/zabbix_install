@@ -112,7 +112,7 @@ install_zabbix_agent2() {
 
         # Instalation zabbix-agent2
         echo "  Installing zabbix-agent2 ..."
-        yum install zabbix-agent2 zabbix-agent2-plugin-* sudo >/dev/null 2>&1
+        yum install -y zabbix-agent2 zabbix-agent2-plugin-* sudo >/dev/null 2>&1
         systemctl enable zabbix-agent2 >/dev/null 2>&1
         pkill -9 zabbix_agent2 >/dev/null 2>&1
 
