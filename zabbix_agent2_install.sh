@@ -196,7 +196,7 @@ install_docker_ce() {
         sudo yum remove -y docker docker-client docker-client-latest docker-common docker-latest docker-latest-logrotate docker-logrotate docker-engine >/dev/null 2>&1
 
         # Check CentOS version
-        if [ "$centos_version" != "7" ]; then
+        if [ "$centos_version" == "7" ]; then
             echo "  Adding docker repository ..."
             sudo yum install -y yum-utils >/dev/null 2>&1
             sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo >/dev/null 2>&1
