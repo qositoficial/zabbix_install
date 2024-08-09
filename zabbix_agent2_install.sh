@@ -198,6 +198,7 @@ install_docker_ce() {
         # Check CentOS version
         if [ "$centos_version" == "7" ]; then
             echo "  Adding docker repository ..."
+            ln -s /usr/share/zoneinfo/ /etc/timezone
             sudo yum install -y yum-utils >/dev/null 2>&1
             sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo >/dev/null 2>&1
             sudo yum install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin >/dev/null 2>&1
