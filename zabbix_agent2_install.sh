@@ -260,6 +260,7 @@ services:
     echo "  Starting zabbix-proxy container ..."
     cd /opt/qnoc
     docker compose up -d >/dev/null 2>&1
+    usermod -aG docker zabbix
     echo "$(docker ps)"
 }
 
