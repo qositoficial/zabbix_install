@@ -215,7 +215,7 @@ create_docker_compose_yml() {
     read -r ZABBIXSERVERADDRESS
     rm -rf /opt/qnoc
     mkdir -p /opt/qnoc
-    echo "version: \"3\"
+    echo "#version: \"3\"
 
 services:
     zabbix-proxy:
@@ -226,10 +226,10 @@ services:
         volumes:
             - type: bind
               source: /etc/localtime
-              target: /etc/localtime:ro
+              target: /etc/localtime
             - type: bind
               source: /etc/timezone
-              target: /etc/timezone:ro
+              target: /etc/timezone
         environment:
             - TZ=\"America/Sao_Paulo\"
             - ZBX_PROXYMODE=0
